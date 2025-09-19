@@ -1,0 +1,12 @@
+volume
+__pycache__
+venv
+.vscode
+.idea
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
+.env
