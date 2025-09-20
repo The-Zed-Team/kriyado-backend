@@ -22,19 +22,43 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel, Timestamps):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
+
+    first_name = models.CharField("First Name", max_length=100, blank=False, null=False)
+    middle_name = models.CharField("Middle Name", max_length=100, blank=True, null=True)
+    last_name = models.CharField("Last Name", max_length=100, blank=True, null=True)
+
+    user_type = models.CharField(
+        "User Type",
+        max_length=50,
+        blank=False,
+        null=False,
+        choices=(
+            ("customer", "Customer"),
+            ("vendor", "Vendor"),
+            ("admin", "Admin"),
+            ("employee", "Employee"),
+        ),
+    )
+
     username = models.CharField(
         max_length=100, db_index=True, null=False, blank=False, unique=True
     )
-    email = models.EmailField("Email Address", max_length=255, db_index=True, unique=True, null=True)
-    phone = models.CharField("Phone Number", max_length=15, blank=True, null=True, db_index=True, unique=True)
+    email = models.EmailField(
+        "Email Address", max_length=255, db_index=True, unique=True, null=True
+    )
+    phone_number = models.CharField(
+        "Phone Number", max_length=15, blank=True, null=True, db_index=True, unique=True
+    )
     password = models.CharField("Password", max_length=128, null=True)
+    email_verified = models.BooleanField("Email Verified", default=False)
+    phone_verified = models.BooleanField("Phone Verified", default=False)
 
     auth_provider = models.CharField(
-        max_length=50, blank=True, null=True, choices=AUTH_PROVIDERS
-    )  # specify which auth provider to use
+        "Auth Provider", max_length=50, blank=True, null=True, choices=AUTH_PROVIDERS
+    )
     is_active = models.BooleanField("Active", default=True)
     activation_key = models.CharField(
-        max_length=100, blank=True, null=True, unique=True
+        "Activation Key", max_length=100, blank=True, null=True, unique=True
     )  # used for activating user in case the user is created manually
 
     objects = UserManager()
@@ -48,7 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel, Timestamps):
 
 # This model stores data for a user's social media accounts.
 # It links to the CustomUser model and stores provider-specific information.
-class SocialAccount(models.Model):
+class AuthenticationProviders(models.Model):
     PROVIDERS = (
         ("google", "Google"),
         ("apple", "Apple"),
@@ -84,12 +108,14 @@ class SocialAccount(models.Model):
         unique_together = ("provider", "user")
 
 
-class UserActivationToken(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='activation_token')
-    token = models.CharField(max_length=64, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    expires_at = models.DateTimeField()
+# class UserActivationToken(models.Model):
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     user = models.OneToOneField(
+#         User, on_delete=models.CASCADE, related_name="activation_token"
+#     )
+#     token = models.CharField(max_length=64, unique=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     expires_at = models.DateTimeField()
 
-    def __str__(self):
-        return f"{self.user.email} - {self.token}"
+#     def __str__(self):
+#         return f"{self.user.email} - {self.token}"

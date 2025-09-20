@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "oauth2_provider",
     "apps.account",
     "apps.vendor",
+    "apps.shared",
 ]
 
 MIDDLEWARE = [
@@ -91,6 +92,7 @@ STATIC_URL = "/static/"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "core.authentication.firebase.authentication_class.FirebaseAuthentication",
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
         "rest_framework.authentication.SessionAuthentication",
     ),
@@ -105,3 +107,6 @@ OAUTH2_PROVIDER = {
     },
     "OAUTH2_FAT_TOKENS": False,
 }
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

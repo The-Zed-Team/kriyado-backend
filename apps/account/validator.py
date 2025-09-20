@@ -1,10 +1,15 @@
 from rest_framework import serializers
 
+from core.authentication.firebase import firebase_client
 
-class ConfirmPasswordValidator:
-    requires_context = True  # allows access to serializer instance
 
-    def __call__(self, confirm_password, serializer):
-        password = serializer.initial_data.get('password')
-        if password != confirm_password:
-            raise serializers.ValidationError("Passwords do not match.")
+class FirebaseUserAuthenticationRequestSerializer(serializers.Serializer):
+    id_token = serializers.CharField(required=True)
+    user_type = serializers.ChoiceField(
+        choices=["customer", "vendor"],
+        required=True,
+    )
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    middle_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+    password = serializers.CharField(required=False, allow_blank=True)

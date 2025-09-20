@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.location.models import *
+from apps.shared.models import *
 
 
 class DistrictSerializer(serializers.ModelSerializer):

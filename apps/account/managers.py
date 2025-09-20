@@ -3,22 +3,58 @@ from safedelete.managers import SafeDeleteManager
 
 
 class UserManager(BaseUserManager, SafeDeleteManager):
-    def get_by_natural_key_and_store(self, username, store, user_type):
-        user_type = user_type if user_type else "su"
-        return self.get(
-            **{
-                self.model.USERNAME_FIELD: username,
-                "deleted__isnull": True,
-                "store": store,
-                "user_type": user_type,
-                "is_guest": False,
-            }
-        )
+    # def get_by_natural_key_and_store(self, username, store, user_type):
+    #     user_type = user_type if user_type else "su"
+    #     return self.get(
+    #         **{
+    #             self.model.USERNAME_FIELD: username,
+    #             "deleted__isnull": True,
+    #             "store": store,
+    #             "user_type": user_type,
+    #             "is_guest": False,
+    #         }
+    #     )
 
-    def create_user(self, email, password=None, **kwargs):
-        email = self.normalize_email(email)
-        user = self.model(email=email, **kwargs)
-        user.set_password(password)
+    def create_user(
+        self,
+        auth_provider="email",
+        user_type="customer",
+        email=None,
+        email_verified=False,
+        phone_verified=False,
+        phone_number=None,
+        password=None,
+        first_name=None,
+        middle_name=None,
+        last_name=None,
+        **kwargs
+    ):
+        if not email and not phone_number:
+            raise ValueError("Users must have an email address or phone number")
+        if auth_provider == "email" and not password:
+            raise ValueError("Password is required for email sign up")
+
+        if email:
+            username = email
+            email = self.normalize_email(email)
+        elif phone_number:
+            username = phone_number
+
+        user = self.model(
+            email=email,
+            phone_number=phone_number,
+            username=username,
+            auth_provider=auth_provider,
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            email_verified=email_verified,
+            phone_verified=phone_verified,
+            user_type=user_type,
+            **kwargs
+        )
+        if auth_provider == "email":
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
