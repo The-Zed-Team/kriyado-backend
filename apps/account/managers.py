@@ -1,5 +1,8 @@
+import re
 from django.contrib.auth.base_user import BaseUserManager
 from safedelete.managers import SafeDeleteManager
+
+from core.common.random import generate_random_string
 
 
 class UserManager(BaseUserManager, SafeDeleteManager):
@@ -18,7 +21,6 @@ class UserManager(BaseUserManager, SafeDeleteManager):
     def create_user(
         self,
         auth_provider="email",
-        user_type="customer",
         email=None,
         email_verified=False,
         phone_verified=False,
@@ -27,18 +29,23 @@ class UserManager(BaseUserManager, SafeDeleteManager):
         first_name=None,
         middle_name=None,
         last_name=None,
-        **kwargs
+        **kwargs,
     ):
         if not email and not phone_number:
             raise ValueError("Users must have an email address or phone number")
         if auth_provider == "email" and not password:
             raise ValueError("Password is required for email sign up")
-
+        # generate a username for the user
+        # username will be in format <user_type>-<email_name or phone_number>-<random_string[6]>
         if email:
-            username = email
             email = self.normalize_email(email)
+            email_name, domain_part = email.strip().rsplit("@", 1)
+            username += email_name
         elif phone_number:
-            username = phone_number
+            username += phone_number
+        username += f"-{generate_random_string(5)}"
+        username = username.lower()
+        username = re.sub(r"[^a-z0-9\-_]", "", username)
 
         user = self.model(
             email=email,
@@ -50,8 +57,7 @@ class UserManager(BaseUserManager, SafeDeleteManager):
             last_name=last_name,
             email_verified=email_verified,
             phone_verified=phone_verified,
-            user_type=user_type,
-            **kwargs
+            **kwargs,
         )
         if auth_provider == "email":
             user.set_password(password)

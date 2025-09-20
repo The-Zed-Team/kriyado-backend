@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 # # from services import *
 from apps.account.models import User
+from apps.vendor.models import Vendor
 
 # # from validator import *
 
@@ -25,15 +26,29 @@ from apps.account.models import User
 
 
 class UserInfoSerializer(serializers.ModelSerializer):
+    has_vendor_account = serializers.SerializerMethodField()
+    has_customer_account = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
             "id",
             "email",
+            "username",
             "phone_number",
             "first_name",
             "middle_name",
             "last_name",
-            "user_type",
             "auth_provider",
+            "email_verified",
+            "phone_verified",
+            "has_vendor_account",
+            "has_customer_account",
         ]
+
+    def get_has_vendor_account(self, obj):
+        return Vendor.objects.filter(user=obj).exists()
+
+    def get_has_customer_account(self, obj):
+        # customer account status fetching not implemented
+        return False

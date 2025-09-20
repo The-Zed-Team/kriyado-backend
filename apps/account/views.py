@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import serializers
 from rest_framework.permissions import AllowAny
 from django.db.models import Q
+from django.db import transaction
 
 # from .serializer import *
 from apps.account.models import AuthenticationProviders, User
@@ -42,6 +43,7 @@ from core.authentication.firebase import firebase_client
 class FirebaseUserAuthenticationView(APIView):
     permission_classes = [AllowAny]
 
+    @transaction.atomic
     def post(self, request):
         request_serializer = FirebaseUserAuthenticationRequestSerializer(
             data=request.data
@@ -50,7 +52,6 @@ class FirebaseUserAuthenticationView(APIView):
         request_data = request_serializer.data
 
         id_token = request_data["id_token"]
-        user_type = request_data["user_type"]
         # below parameters are required only if the provider is email
         password = request_data.get("password")
         first_name = request_data.get("first_name")
@@ -166,7 +167,6 @@ class FirebaseUserAuthenticationView(APIView):
                     if providers[0]["provider"] != "firebase"
                     else "email"
                 ),
-                "user_type": user_type,
             }
 
             user = User.objects.create_user(**user_data)
@@ -176,11 +176,11 @@ class FirebaseUserAuthenticationView(APIView):
         return Response(
             data={
                 "id": str(user.id),
+                "username": user.username,
                 "email": user.email,
                 "phone": user.phone_number,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
-                "user_type": user.user_type,
                 "email_verified": user.email_verified,
                 "phone_verified": user.phone_verified,
                 "providers": providers,

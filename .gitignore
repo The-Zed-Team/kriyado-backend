@@ -10,3 +10,4 @@ venv
 *.db
 *.log
 .env
+firebase-secret.json

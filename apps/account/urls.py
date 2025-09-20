@@ -1,6 +1,9 @@
 from django.urls import path
 
-from apps.account.views import FirebaseUserAuthenticationView, UserInfoView
+from apps.account.views import (
+    FirebaseUserAuthenticationView,
+    UserInfoView,
+)
 from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter(trailing_slash=False)

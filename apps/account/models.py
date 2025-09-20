@@ -27,24 +27,11 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel, Timestamps):
     middle_name = models.CharField("Middle Name", max_length=100, blank=True, null=True)
     last_name = models.CharField("Last Name", max_length=100, blank=True, null=True)
 
-    user_type = models.CharField(
-        "User Type",
-        max_length=50,
-        blank=False,
-        null=False,
-        choices=(
-            ("customer", "Customer"),
-            ("vendor", "Vendor"),
-            ("admin", "Admin"),
-            ("employee", "Employee"),
-        ),
-    )
-
     username = models.CharField(
-        max_length=100, db_index=True, null=False, blank=False, unique=True
+        max_length=170, db_index=True, null=False, blank=False, unique=True
     )
     email = models.EmailField(
-        "Email Address", max_length=255, db_index=True, unique=True, null=True
+        "Email Address", max_length=150, db_index=True, null=True, unique=True
     )
     phone_number = models.CharField(
         "Phone Number", max_length=15, blank=True, null=True, db_index=True, unique=True
