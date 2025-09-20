@@ -1,7 +1,7 @@
+from django.core.validators import MinValueValidator
 from django.db import models
-from django.contrib.auth.models import User
-from django.utils import timezone
-from django.core.validators import MaxValueValidator, MinValueValidator
+
+from apps.account.models import User
 
 
 # Enum-like classes for choices to ensure data consistency
@@ -53,17 +53,17 @@ class VendorProfile(models.Model):
     # Wizard 1 - Location
     shop_type = models.CharField(max_length=100)
     business_type = models.CharField(max_length=20, choices=BusinessType.choices)
-    country = models.CharField(max_length=50)
-    state = models.CharField(max_length=50)
-    district = models.CharField(max_length=50)
-    shop_locality = models.CharField(max_length=100)
-    nearby_town = models.CharField(max_length=100)
-    pin_code = models.CharField(max_length=10)
-    organization_name = models.CharField(max_length=255)
+    # country = models.CharField(max_length=50)
+    # state = models.CharField(max_length=50)
+    # district = models.CharField(max_length=50)
+    # shop_locality = models.CharField(max_length=100)
+    # nearby_town = models.CharField(max_length=100)
+    # pin_code = models.CharField(max_length=10)
+    # organization_name = models.CharField(max_length=255)
     owner_name = models.CharField(max_length=100, blank=True, null=True)
     mobile_number = models.CharField(max_length=15)
-    key_person_name = models.CharField(max_length=100)
-    key_person_contact_number = models.CharField(max_length=15)
+    # key_person_name = models.CharField(max_length=100)
+    # key_person_contact_number = models.CharField(max_length=15)
 
     # Wizard 2 - Contact
     land_phone = models.CharField(max_length=20, blank=True, null=True)
