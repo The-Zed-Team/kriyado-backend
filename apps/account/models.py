@@ -25,17 +25,8 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel, Timestamps):
     username = models.CharField(
         max_length=100, db_index=True, null=False, blank=False, unique=True
     )
-    email = models.EmailField(
-        ("Email Address"), max_length=255, db_index=True, unique=True, null=True
-    )
-    phone = models.CharField(
-        ("Phone Number"),
-        max_length=15,
-        blank=True,
-        null=True,
-        db_index=True,
-        unique=True,
-    )
+    email = models.EmailField("Email Address", max_length=255, db_index=True, unique=True, null=True)
+    phone = models.CharField("Phone Number", max_length=15, blank=True, null=True, db_index=True, unique=True)
     password = models.CharField("Password", max_length=128, null=True)
 
     auth_provider = models.CharField(

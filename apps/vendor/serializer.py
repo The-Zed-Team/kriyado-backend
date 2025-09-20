@@ -1,21 +1,32 @@
-from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.account.models import User
-from apps.account.services import UserService
-from apps.vendor.validator import ConfirmPasswordValidator
+from services import *
 
 
-class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, validators=[validate_password])
-    confirm_password = serializers.CharField(write_only=True, validators=[ConfirmPasswordValidator()])
+class VendorProfileSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
-        model = User
-        fields = ['email', 'password', 'confirm_password']
+        model = VendorProfile
+        fields = '__all__'
 
     def create(self, validated_data):
-        email = validated_data['email']
-        password = validated_data['password']
+        return create_vendor_profile(validated_data)
 
-        return UserService.register_user(email=email, password=password)
+
+class VendorBranchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VendorBranch
+        exclude = ['vendor']
+
+
+class VendorDiscountSerializer(serializers.ModelSerializer):
+    branches = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=VendorBranch.objects.all(),
+        required=False
+    )
+
+    class Meta:
+        model = VendorDiscount
+        exclude = ['vendor']
