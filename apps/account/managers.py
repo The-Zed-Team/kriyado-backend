@@ -37,12 +37,13 @@ class UserManager(BaseUserManager, SafeDeleteManager):
             raise ValueError("Password is required for email sign up")
         # generate a username for the user
         # username will be in format <user_type>-<email_name or phone_number>-<random_string[6]>
+        # username = ""
         if email:
             email = self.normalize_email(email)
             email_name, domain_part = email.strip().rsplit("@", 1)
-            username += email_name
+            username = email_name
         elif phone_number:
-            username += phone_number
+            username = phone_number
         username += f"-{generate_random_string(5)}"
         username = username.lower()
         username = re.sub(r"[^a-z0-9\-_]", "", username)
