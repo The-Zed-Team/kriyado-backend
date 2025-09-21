@@ -1,9 +1,9 @@
 from rest_framework import generics
 from rest_framework import status
+from rest_framework import views
 from rest_framework.response import Response
-from rest_framework import viewsets, views
 
-from .serializer import CreateVendorSerializer
+from .serializer import *
 
 
 class VendorCreateAPIView(generics.CreateAPIView):
@@ -27,3 +27,50 @@ class VendorOnboardingStatusAPIView(views.APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class VendorBranchCreateAPIView(generics.CreateAPIView):
+    """Create a new vendor branch"""
+    serializer_class = VendorBranchSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"user": self.request.user})
+        return context
+
+
+class VendorBranchListAPIView(generics.ListAPIView):
+    """List all branches for the logged-in vendor"""
+    serializer_class = VendorBranchSerializer
+
+    def get_queryset(self):
+        return VendorBranch.objects.filter(vendor__user=self.request.user)
+
+
+class VendorBranchDetailAPIView(generics.RetrieveAPIView):
+    """Get details of a single branch"""
+    serializer_class = VendorBranchSerializer
+
+    def get_queryset(self):
+        return VendorBranch.objects.filter(vendor__user=self.request.user)
+
+
+class VendorBranchUpdateAPIView(generics.UpdateAPIView):
+    """Update a vendor branch"""
+    serializer_class = VendorBranchSerializer
+
+    def get_queryset(self):
+        return VendorBranch.objects.filter(vendor__user=self.request.user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"user": self.request.user})
+        return context
+
+
+class VendorBranchDeleteAPIView(generics.DestroyAPIView):
+    """Delete a vendor branch (soft delete since using SafeDeleteModel)"""
+    serializer_class = VendorBranchSerializer
+
+    def get_queryset(self):
+        return VendorBranch.objects.filter(vendor__user=self.request.user)
