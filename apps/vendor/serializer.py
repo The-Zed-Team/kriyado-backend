@@ -95,3 +95,16 @@ class VendorBranchSerializer(serializers.ModelSerializer):
         vendor = Vendor.objects.get(user=self.context["user"])
         validated_data["vendor"] = vendor
         return super().create(validated_data)
+
+
+class ShopTypeSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ShopType
+        fields = (
+            "id",
+            "name",
+            "code",
+            "description"
+        )

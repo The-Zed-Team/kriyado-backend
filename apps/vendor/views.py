@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework import status
 from rest_framework import views
 from rest_framework.response import Response
@@ -74,3 +74,11 @@ class VendorBranchDeleteAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return VendorBranch.objects.filter(vendor__user=self.request.user)
+
+
+class ShopTypeViewSet(viewsets.ModelViewSet):
+    """
+    Full CRUD API for ShopType
+    """
+    queryset = ShopType.objects.all().order_by("name")
+    serializer_class = ShopTypeSerializer
