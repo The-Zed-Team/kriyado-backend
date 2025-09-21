@@ -82,3 +82,13 @@ class ShopTypeViewSet(viewsets.ModelViewSet):
     """
     queryset = ShopType.objects.all().order_by("name")
     serializer_class = ShopTypeSerializer
+
+
+class VendorDetailAPIView(generics.RetrieveAPIView):
+    """
+    Retrieve vendor info with profile, default branch, and all branches
+    """
+    serializer_class = VendorDetailSerializer
+
+    def get_object(self):
+        return Vendor.objects.get(user=self.request.user)

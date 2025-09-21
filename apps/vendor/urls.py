@@ -21,6 +21,7 @@ urlpatterns += [
         views.VendorOnboardingStatusAPIView.as_view(),
         name="vendor-onboarding-status",
     ),
+    path("vendor/details/", views.VendorDetailAPIView.as_view(), name="vendor-details"),
 ]
 
 # Vendor branch routes
