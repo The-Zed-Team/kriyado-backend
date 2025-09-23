@@ -16,6 +16,7 @@ urlpatterns = [
 # Vendor profile routes
 urlpatterns += [
     path("vendor/create/", views.VendorCreateAPIView.as_view(), name="vendor-create"),
+    path("vendors/update/", views.VendorUpdateAPIView.as_view(), name="vendor-update"),
     path(
         "vendor/onboarding-status/",
         views.VendorOnboardingStatusAPIView.as_view(),

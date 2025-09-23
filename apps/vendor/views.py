@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework import status
 from rest_framework import views
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .serializer import *
@@ -8,6 +9,20 @@ from .serializer import *
 
 class VendorCreateAPIView(generics.CreateAPIView):
     serializer_class = CreateVendorSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"user": self.request.user})
+        return context
+
+
+class VendorUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = UpdateVendorSerializer
+    queryset = Vendor.objects.all()
+
+    def get_object(self):
+        # Ensure only the logged-in user's vendor can be updated
+        return get_object_or_404(Vendor, user=self.request.user)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -31,6 +46,7 @@ class VendorOnboardingStatusAPIView(views.APIView):
 
 class VendorBranchCreateAPIView(generics.CreateAPIView):
     """Create a new vendor branch"""
+
     serializer_class = VendorBranchSerializer
 
     def get_serializer_context(self):
@@ -41,6 +57,7 @@ class VendorBranchCreateAPIView(generics.CreateAPIView):
 
 class VendorBranchListAPIView(generics.ListAPIView):
     """List all branches for the logged-in vendor"""
+
     serializer_class = VendorBranchSerializer
 
     def get_queryset(self):
@@ -49,6 +66,7 @@ class VendorBranchListAPIView(generics.ListAPIView):
 
 class VendorBranchDetailAPIView(generics.RetrieveAPIView):
     """Get details of a single branch"""
+
     serializer_class = VendorBranchSerializer
 
     def get_queryset(self):
@@ -57,6 +75,7 @@ class VendorBranchDetailAPIView(generics.RetrieveAPIView):
 
 class VendorBranchUpdateAPIView(generics.UpdateAPIView):
     """Update a vendor branch"""
+
     serializer_class = VendorBranchSerializer
 
     def get_queryset(self):
@@ -70,6 +89,7 @@ class VendorBranchUpdateAPIView(generics.UpdateAPIView):
 
 class VendorBranchDeleteAPIView(generics.DestroyAPIView):
     """Delete a vendor branch (soft delete since using SafeDeleteModel)"""
+
     serializer_class = VendorBranchSerializer
 
     def get_queryset(self):
