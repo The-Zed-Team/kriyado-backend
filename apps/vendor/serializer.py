@@ -35,6 +35,33 @@ class CreateVendorSerializer(serializers.ModelSerializer):
         )
 
 
+class UpdateVendorSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+    shop_type = serializers.PrimaryKeyRelatedField(
+        queryset=ShopType.objects.all(), required=False
+    )
+
+    def validate(self, attrs):
+        vendor = getattr(self.instance, "user", None)
+        if vendor and vendor != self.context["user"]:
+            raise serializers.ValidationError(
+                "You cannot update another user's vendor profile."
+            )
+        return super().validate(attrs)
+
+    class Meta:
+        model = Vendor
+        fields = (
+            "id",
+            "name",
+            "contact_number",
+            "shop_type",
+            "business_type",
+            "owner_name",
+        )
+        read_only_fields = ("id",)
+
+
 # class VendorProfileSerializer(serializers.ModelSerializer):
 #     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
