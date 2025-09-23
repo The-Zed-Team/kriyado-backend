@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework import status
 from rest_framework import views
 from rest_framework.generics import get_object_or_404
@@ -94,3 +94,21 @@ class VendorBranchDeleteAPIView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return VendorBranch.objects.filter(vendor__user=self.request.user)
+
+
+class ShopTypeViewSet(viewsets.ModelViewSet):
+    """
+    Full CRUD API for ShopType
+    """
+    queryset = ShopType.objects.all().order_by("name")
+    serializer_class = ShopTypeSerializer
+
+
+class VendorDetailAPIView(generics.RetrieveAPIView):
+    """
+    Retrieve vendor info with profile, default branch, and all branches
+    """
+    serializer_class = VendorDetailSerializer
+
+    def get_object(self):
+        return Vendor.objects.get(user=self.request.user)

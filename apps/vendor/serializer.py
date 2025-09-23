@@ -122,3 +122,33 @@ class VendorBranchSerializer(serializers.ModelSerializer):
         vendor = Vendor.objects.get(user=self.context["user"])
         validated_data["vendor"] = vendor
         return super().create(validated_data)
+
+
+class ShopTypeSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = ShopType
+        fields = (
+            "id",
+            "name",
+            "code",
+            "description"
+        )
+
+
+class VendorDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vendor
+        fields = (
+            "id",
+            "name",
+            "contact_number",
+            "shop_type",  # FK to ShopType
+            "business_type",
+            "owner_name",
+            "is_onboarded",
+            "profile",  # OneToOne to VendorProfile
+            "branches",  # reverse FK to VendorBranch
+        )
+        depth = 2  # expands profile, default_branch inside profile, branches, shop_type
