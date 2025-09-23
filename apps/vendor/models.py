@@ -1,9 +1,10 @@
 import uuid
+
 from django.db import models
+from safedelete.models import SOFT_DELETE_CASCADE, SafeDeleteModel
 
 from apps.account.models import User
 from core.django.models.mixins import Timestamps
-from safedelete.models import SOFT_DELETE_CASCADE, SafeDeleteModel
 
 # DISCOUNT_VALUE_TYPE_CHOICES = (
 #     ("Flat", "Flat"),
@@ -167,12 +168,11 @@ class VendorBranch(SafeDeleteModel, Timestamps):
 
     _safedelete_policy = SOFT_DELETE_CASCADE
 
-    vendor = models.ForeignKey(
-        Vendor, on_delete=models.CASCADE, related_name="branches"
-    )
-
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True
+    )
+    vendor = models.ForeignKey(
+        Vendor, on_delete=models.CASCADE, related_name="branches"
     )
     country = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
