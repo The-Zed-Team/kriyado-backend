@@ -34,7 +34,7 @@ jobs:
             cd ${{ vars.DEPLOY_PATH }}
 
             git fetch --all --prune
-            git reset --hard origin/main
+            git reset --hard origin/master
 
             docker-compose down || true
             docker-compose up -d --build --remove-orphans
