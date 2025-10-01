@@ -22,6 +22,8 @@ ALLOWED_HOSTS = config(
     "ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",") if s]
 )
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -36,10 +38,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "kriyado.urls"
