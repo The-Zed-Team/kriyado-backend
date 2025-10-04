@@ -42,7 +42,7 @@ from core.authentication.firebase import firebase_client
 
 class FirebaseUserAuthenticationView(APIView):
     permission_classes = [AllowAny]
-
+    authentication_classes = []
     @transaction.atomic
     def post(self, request):
         request_serializer = FirebaseUserAuthenticationRequestSerializer(
