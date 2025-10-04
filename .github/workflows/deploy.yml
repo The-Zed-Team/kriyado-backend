@@ -1,0 +1,40 @@
+name: Deploy Django App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Add SSH known hosts (optional)
+        run: |
+          if [ -n "${{ secrets.SSH_KNOWN_HOSTS }}" ]; then
+            mkdir -p ~/.ssh
+            echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+            chmod 600 ~/.ssh/known_hosts
+          fi
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ vars.DEPLOY_HOST }}
+          username: ${{ vars.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          timeout: 30s
+          script: |
+            set -euo pipefail
+            cd ${{ vars.DEPLOY_PATH }}
+
+            git fetch --all --prune
+            git reset --hard origin/master
+
+            docker-compose down || true
+            docker-compose up -d --build --remove-orphans
