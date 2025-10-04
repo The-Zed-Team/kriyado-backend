@@ -1,34 +1,37 @@
-from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import generics
-from rest_framework.exceptions import NotFound
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+from apps.shared.models import Country, State, District
+from apps.shared.serializer import CountrySerializer, StateSerializer, DistrictSerializer
 
-from apps.shared.serializer import *
 
-
-class CountryOptionsListAPIView(generics.ListAPIView):
+class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    permission_classes = [AllowAny]      # Public API
+    authentication_classes = []          # Skip Firebase auth
 
 
-class StateOptionsListAPIView(generics.ListAPIView):
+class StateViewSet(viewsets.ModelViewSet):
+    queryset = State.objects.all()
     serializer_class = StateSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_queryset(self):
         country_id = self.kwargs.get("country_id")
-        try:
-            country = Country.objects.get(id=country_id)
-        except ObjectDoesNotExist:
-            raise NotFound("Country not found")
-        return State.objects.filter(country=country)
+        if country_id:
+            return self.queryset.filter(country_id=country_id)
+        return self.queryset
 
 
-class DistrictOptionsListAPIView(generics.ListAPIView):
+class DistrictViewSet(viewsets.ModelViewSet):
+    queryset = District.objects.all()
     serializer_class = DistrictSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
 
     def get_queryset(self):
         state_id = self.kwargs.get("state_id")
-        try:
-            state = State.objects.get(id=state_id)
-        except ObjectDoesNotExist:
-            raise NotFound("State not found")
-        return District.objects.filter(state=state)
+        if state_id:
+            return self.queryset.filter(state_id=state_id)
+        return self.queryset
