@@ -3,6 +3,7 @@ from rest_framework.permissions import AllowAny
 from apps.shared.models import Country, State, District
 from apps.shared.serializer import CountrySerializer, StateSerializer, DistrictSerializer
 
+from apps.shared.serializer import *
 
 class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
