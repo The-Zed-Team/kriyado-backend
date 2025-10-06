@@ -2,6 +2,7 @@ from rest_framework import generics, viewsets
 from rest_framework import status
 from rest_framework import views
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from .serializer import *
@@ -63,6 +64,8 @@ class ShopTypeViewSet(viewsets.ModelViewSet):
     """
     Full CRUD API for ShopType
     """
+    permission_classes = [AllowAny]
+    authentication_classes = []
     queryset = ShopType.objects.all().order_by("name")
     serializer_class = ShopTypeSerializer
 
