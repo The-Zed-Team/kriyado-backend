@@ -1,15 +1,15 @@
+from django.db import transaction
+from django.db.models import Q
 from rest_framework import generics
+from rest_framework import serializers
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import serializers
-from rest_framework.permissions import AllowAny
-from django.db.models import Q
-from django.db import transaction
 
 # from .serializer import *
 from apps.account.models import AuthenticationProviders, User
-from apps.account.serializer import UserInfoSerializer
+from apps.account.serializer import UserInfoSerializer, SuperUserCreateSerializer
 from apps.account.validator import FirebaseUserAuthenticationRequestSerializer
 from core.authentication.firebase import firebase_client
 
@@ -196,3 +196,21 @@ class UserInfoView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class SuperUserCreateAPIView(APIView):
+    authentication_classes = [AllowAny]
+    permission_classes = []
+
+    def post(self, request):
+        serializer = SuperUserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({
+                "id": str(user.id),
+                "username": user.username,
+                "email": user.email,
+                "phone_number": user.phone_number,
+                "message": "Superuser created successfully"
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
