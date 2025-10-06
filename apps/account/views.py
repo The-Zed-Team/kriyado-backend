@@ -199,8 +199,8 @@ class UserInfoView(generics.RetrieveAPIView):
 
 
 class SuperUserCreateAPIView(APIView):
-    authentication_classes = [AllowAny]
-    permission_classes = []
+    authentication_classes = []
+    permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = SuperUserCreateSerializer(data=request.data)
