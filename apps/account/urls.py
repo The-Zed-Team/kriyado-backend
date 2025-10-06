@@ -1,10 +1,10 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 
 from apps.account.views import (
     FirebaseUserAuthenticationView,
-    UserInfoView,
+    UserInfoView, SuperUserCreateAPIView,
 )
-from rest_framework.routers import SimpleRouter
 
 router = SimpleRouter(trailing_slash=False)
 
@@ -19,5 +19,10 @@ urlpatterns = [
         r"account/firebase_authenticate/",
         FirebaseUserAuthenticationView.as_view(),
         name="firebase-authenticate",
+    ),
+    path(
+        r"account/admin/create/",
+        SuperUserCreateAPIView.as_view(),
+        name="user-info",
     ),
 ]
