@@ -5,6 +5,7 @@ from rest_framework import serializers
 from apps.account.models import User
 from apps.vendor.models import Vendor
 
+
 # # from validator import *
 
 
@@ -52,3 +53,20 @@ class UserInfoSerializer(serializers.ModelSerializer):
     def get_has_customer_account(self, obj):
         # customer account status fetching not implemented
         return False
+
+
+class SuperUserCreateSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False)
+    phone_number = serializers.CharField(required=False)
+    password = serializers.CharField(write_only=True, required=True)
+    first_name = serializers.CharField(required=False, allow_blank=True)
+    middle_name = serializers.CharField(required=False, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_blank=True)
+
+    def validate(self, attrs):
+        if not attrs.get("email") and not attrs.get("phone_number"):
+            raise serializers.ValidationError("Email or phone number is required")
+        return attrs
+
+    def create(self, validated_data):
+        return User.objects.create_superuser(**validated_data)

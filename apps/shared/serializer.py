@@ -6,13 +6,13 @@ from apps.shared.models import *
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
-        fields = ["id", "name"]
+        fields = '__all__'
 
 
 class StateSerializer(serializers.ModelSerializer):
     class Meta:
         model = State
-        fields = ["id", "name"]
+        fields = '__all__'
 
 
 class CountrySerializer(serializers.ModelSerializer):
