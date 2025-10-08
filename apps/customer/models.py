@@ -34,7 +34,7 @@ class Customer(models.Model):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="vendor")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer")
     package = models.ForeignKey(
         Package, on_delete=models.SET_NULL, null=True, blank=True
     )
