@@ -191,3 +191,40 @@ class VendorBranch(SafeDeleteModel, Timestamps):
     )
     def __str__(self):
         return f"Branch for {self.vendor.user.username} in {self.shop_locality}"
+
+
+class Discount(models.Model):
+    DISCOUNT_TYPE_CHOICES = [
+        ('total_bill', 'Total Bill'),
+        ('category', 'Category Based'),
+        ('special', 'Special Offer'),
+    ]
+
+    VALUE_TYPE_CHOICES = [
+        ('flat', 'Flat'),
+        ('percent', 'Percentage'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending Verification'),
+        ('active', 'Active'),
+    ]
+
+    vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='discounts')
+    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE_CHOICES)
+    category = models.CharField(max_length=100, blank=True, null=True)
+
+    value_type = models.CharField(max_length=10, choices=VALUE_TYPE_CHOICES)
+    value = models.DecimalField(max_digits=10, decimal_places=2)
+
+    description = models.TextField(blank=True, null=True)
+    vendorBranch = models.ManyToManyField(VendorBranch, related_name='discounts')
+    min_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.discount_type} - {self.value}{'%' if self.value_type == 'percent' else ''}"

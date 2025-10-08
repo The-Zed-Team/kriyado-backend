@@ -1,6 +1,7 @@
-from rest_framework import generics, viewsets
+from rest_framework import generics
 from rest_framework import status
 from rest_framework import views
+from rest_framework import viewsets, filters
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -78,3 +79,32 @@ class VendorDetailAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return Vendor.objects.get(user=self.request.user)
+
+
+class DiscountViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing vendor discounts:
+      - Vendors can create and update discounts
+      - Automatically marks 'pending' when edited (handled in serializer)
+      - Supports filtering, search, and ordering
+      - No custom permissions required
+    """
+    queryset = Discount.objects.all().prefetch_related('vendorBranch')
+    serializer_class = DiscountSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['discount_type', 'category', 'description']
+    ordering_fields = ['created_at', 'expiry_date']
+
+    def get_queryset(self):
+        # Optionally restrict to vendor's discounts if user is authenticated
+        user = self.request.user
+        if user.is_authenticated:
+            return Discount.objects.filter(vendor=user).prefetch_related('vendorBranch')
+        return Discount.objects.none()  # or .all() if you want public view
+
+    def perform_create(self, serializer):
+        # Automatically assign vendor if authenticated
+        if self.request.user.is_authenticated:
+            serializer.save(vendor=self.request.user)
+        else:
+            serializer.save()

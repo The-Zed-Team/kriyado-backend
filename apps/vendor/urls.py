@@ -2,12 +2,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from . import views
-from .views import ShopTypeViewSet, VendorBranchViewSet
+from .views import ShopTypeViewSet, VendorBranchViewSet, DiscountViewSet
 
 # Router for ShopType ViewSet
 router = DefaultRouter()
 router.register(r"vendor/shop-types", ShopTypeViewSet, basename="shop_type")
 router.register(r"vendor/branches", VendorBranchViewSet, basename="vendor-branch")
+router.register('discounts', DiscountViewSet, basename='discount')
+
+urlpatterns = router.urls
 
 # Base urlpatterns
 urlpatterns = [
