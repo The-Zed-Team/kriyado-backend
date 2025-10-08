@@ -1,5 +1,3 @@
-import re
-
 from rest_framework import serializers
 
 from apps.vendor.models import *
@@ -97,3 +95,50 @@ class VendorBranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = VendorBranch
         fields = "__all__"
+
+
+class DiscountSerializer(serializers.ModelSerializer):
+    vendorBranch = VendorBranchSerializer(many=True, read_only=True)
+    branch_ids = serializers.PrimaryKeyRelatedField(
+        queryset=VendorBranch.objects.all(),
+        many=True,
+        write_only=True,
+        source='vendorBranch'
+    )
+
+    class Meta:
+        model = Discount
+        fields = [
+            'id',
+            'vendor',
+            'discount_type',
+            'category',
+            'value_type',
+            'value',
+            'description',
+            'min_purchase',
+            'expiry_date',
+            'vendorBranch',
+            'branch_ids',
+            'status',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['vendor', 'status', 'created_at', 'updated_at']
+
+    def create(self, validated_data):
+        branches = validated_data.pop('vendorBranch', [])
+        discount = Discount.objects.create(**validated_data)
+        discount.vendorBranch.set(branches)
+        return discount
+
+    def update(self, instance, validated_data):
+        branches = validated_data.pop('vendorBranch', None)
+        # Any vendor edit sets discount back to pending
+        instance.status = 'pending'
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if branches is not None:
+            instance.vendorBranch.set(branches)
+        return instance
