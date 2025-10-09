@@ -43,18 +43,3 @@ class District(Timestamps):
     def __str__(self):
         return f"{self.name}, {self.state.name}"
 
-
-class Discount(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=255)
-    is_active = models.BooleanField(default=True)
-
-    class Meta:
-        verbose_name = "Discount"
-        verbose_name_plural = "Discounts"
-        ordering = ["id"]
-
-    def __str__(self):
-        return self.name

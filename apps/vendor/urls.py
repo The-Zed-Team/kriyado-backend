@@ -2,13 +2,13 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from . import views
-from .views import ShopTypeViewSet, VendorBranchViewSet, DiscountViewSet
+from .views import ShopTypeViewSet, VendorBranchViewSet, DiscountViewSet, TotalBillPresetViewSet
 
 router = DefaultRouter()
 router.register(r"vendor/shop-types", ShopTypeViewSet, basename="shop_type")
 router.register(r"vendor/branches", VendorBranchViewSet, basename="vendor-branch")
 router.register(r"vendor/discounts", DiscountViewSet, basename="discount")
-
+router.register(r"vendor/discount/options", TotalBillPresetViewSet)
 urlpatterns = [
     *router.urls,
 
