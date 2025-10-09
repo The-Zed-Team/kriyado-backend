@@ -38,3 +38,8 @@ class DistrictViewSet(viewsets.ModelViewSet):
         if state_id:
             queryset = queryset.filter(state_id=state_id)
         return queryset
+
+
+class DiscountViewSet(viewsets.ModelViewSet):
+    queryset = Discount.objects.all().order_by("id")
+    serializer_class = DiscountSerializer
