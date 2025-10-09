@@ -40,6 +40,3 @@ class DistrictViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class DiscountViewSet(viewsets.ModelViewSet):
-    queryset = Discount.objects.all().order_by("id")
-    serializer_class = DiscountSerializer

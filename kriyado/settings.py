@@ -1,4 +1,5 @@
 import os
+
 from decouple import config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,7 +35,8 @@ INSTALLED_APPS = [
     "apps.account",
     "apps.vendor",
     "apps.shared",
-    "apps.customer"
+    "apps.customer",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
