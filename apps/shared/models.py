@@ -43,20 +43,3 @@ class District(Timestamps):
     def __str__(self):
         return f"{self.name}, {self.state.name}"
 
-
-# class Address(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
-#     country = models.ForeignKey(Country, on_delete=models.PROTECT)
-#     state = models.ForeignKey(State, on_delete=models.PROTECT)
-#     district = models.ForeignKey(District, on_delete=models.PROTECT)
-#     city = models.CharField(max_length=100)
-#     nearby_landmark = models.CharField(max_length=255, blank=True, null=True)
-#     pin_code = models.CharField(max_length=10)
-
-
-#     class Meta:
-#         db_table = "address"
-
-#     def __str__(self):
-#         return f"{self.address_line1}, {self.city}, {self.state}, {self.country} - {self.postal_code}"

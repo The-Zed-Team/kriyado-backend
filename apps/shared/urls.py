@@ -1,4 +1,5 @@
 from rest_framework.routers import DefaultRouter
+
 from apps.shared.views import CountryViewSet, StateViewSet, DistrictViewSet
 
 router = DefaultRouter()

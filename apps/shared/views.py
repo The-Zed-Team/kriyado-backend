@@ -38,3 +38,5 @@ class DistrictViewSet(viewsets.ModelViewSet):
         if state_id:
             queryset = queryset.filter(state_id=state_id)
         return queryset
+
+

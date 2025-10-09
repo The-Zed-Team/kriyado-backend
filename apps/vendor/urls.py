@@ -1,24 +1,17 @@
-from django.urls import path, include
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from . import views
-from .views import ShopTypeViewSet, VendorBranchViewSet, DiscountViewSet
+from .views import ShopTypeViewSet, VendorBranchViewSet, DiscountViewSet, TotalBillPresetViewSet
 
-# Router for ShopType ViewSet
 router = DefaultRouter()
 router.register(r"vendor/shop-types", ShopTypeViewSet, basename="shop_type")
 router.register(r"vendor/branches", VendorBranchViewSet, basename="vendor-branch")
-router.register('discounts', DiscountViewSet, basename='discount')
-
-urlpatterns = router.urls
-
-# Base urlpatterns
+router.register(r"vendor/discounts", DiscountViewSet, basename="discount")
+router.register(r"vendor/discount/options", TotalBillPresetViewSet)
 urlpatterns = [
-    path("", include(router.urls)),  # includes ShopType ViewSet endpoints
-]
+    *router.urls,
 
-# Vendor profile routes
-urlpatterns += [
     path("vendor/create/", views.VendorCreateAPIView.as_view(), name="vendor-create"),
     path("vendor/update/", views.VendorUpdateAPIView.as_view(), name="vendor-update"),
     path(
@@ -28,4 +21,3 @@ urlpatterns += [
     ),
     path("vendor/details/", views.VendorDetailAPIView.as_view(), name="vendor-details"),
 ]
-

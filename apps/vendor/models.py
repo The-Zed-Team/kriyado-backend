@@ -193,38 +193,51 @@ class VendorBranch(SafeDeleteModel, Timestamps):
         return f"Branch for {self.vendor.user.username} in {self.shop_locality}"
 
 
+# Preset Discounts
+class TotalBillPreset(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Discount"
+        verbose_name_plural = "Discounts"
+        ordering = ["id"]
+
+    def __str__(self):
+        return self.name
+
+
+# Discount Model
 class Discount(models.Model):
-    DISCOUNT_TYPE_CHOICES = [
-        ('total_bill', 'Total Bill'),
-        ('category', 'Category Based'),
-        ('special', 'Special Offer'),
-    ]
-
     VALUE_TYPE_CHOICES = [
-        ('flat', 'Flat'),
-        ('percent', 'Percentage'),
+        ("flat", "Flat"),
+        ("percent", "%"),
     ]
 
-    STATUS_CHOICES = [
-        ('pending', 'Pending Verification'),
-        ('active', 'Active'),
+    APPROVAL_STATUS = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
     ]
 
-    vendor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='discounts')
-    discount_type = models.CharField(max_length=20, choices=DISCOUNT_TYPE_CHOICES)
-    category = models.CharField(max_length=100, blank=True, null=True)
-
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
     value_type = models.CharField(max_length=10, choices=VALUE_TYPE_CHOICES)
     value = models.DecimalField(max_digits=10, decimal_places=2)
+    min_purchase_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    branches = models.ManyToManyField(VendorBranch, related_name="discounts")
+    preset = models.ForeignKey(TotalBillPreset, on_delete=models.SET_NULL, blank=True, null=True)
 
-    description = models.TextField(blank=True, null=True)
-    vendorBranch = models.ManyToManyField(VendorBranch, related_name='discounts')
-    min_purchase = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    expiry_date = models.DateField(null=True, blank=True)
+    approval_status = models.CharField(max_length=10, choices=APPROVAL_STATUS, default="pending")
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                    related_name="approved_discounts")
+    approved_at = models.DateTimeField(blank=True, null=True)
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.discount_type} - {self.value}{'%' if self.value_type == 'percent' else ''}"
+        return f"{self.name} ({self.value_type} {self.value})"
