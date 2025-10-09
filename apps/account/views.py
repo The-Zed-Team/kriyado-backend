@@ -174,8 +174,7 @@ class FirebaseUserAuthenticationView(APIView):
                 "email_verified": user.email_verified,
                 "phone_verified": user.phone_verified,
                 "providers": providers,
-                "new_user": create_user,
-                "user_type": user.user_type
+                "new_user": create_user
             },
             status=status.HTTP_200_OK,
         )
