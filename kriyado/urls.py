@@ -23,7 +23,7 @@ urlpatterns = [
     path("api/v1/", include("apps.urls")),
 
     # Swagger / Redoc at base URL
-    path("", schema_view.with_ui("swagger", cache_timeout=0), name="swagger-ui"),  # Base URL
+    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="swagger-ui"),  # Base URL
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="redoc-ui"),
     path("swagger.json", schema_view.without_ui(cache_timeout=0), name="schema-json"),
 ]
