@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "apps.vendor",
     "apps.shared",
     "apps.customer",
+    "apps.vendor.discounts",
     "drf_yasg",
 ]
 
