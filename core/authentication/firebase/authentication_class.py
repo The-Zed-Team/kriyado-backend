@@ -36,10 +36,8 @@ class FirebaseAuthentication(authentication.BaseAuthentication):
         if not uid:
             raise exceptions.AuthenticationFailed("Invalid token: no UID found")
         try:
-            auth_provider = (
-                AuthenticationProviders.objects.select_related("user")
-                .only("id", "user")
-                .get(provider="firebase", provider_uid=uid)
+            auth_provider = AuthenticationProviders.objects.select_related("user").get(
+                provider="firebase", provider_uid=uid
             )
         except AuthenticationProviders.DoesNotExist:
             raise exceptions.AuthenticationFailed("No user associated with this token")
