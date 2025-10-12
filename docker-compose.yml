@@ -6,7 +6,7 @@ services:
     container_name: kriyado-postgres
     env_file: .env
     volumes:
-      - ./volume/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
