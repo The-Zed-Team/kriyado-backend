@@ -251,7 +251,7 @@ class VendorUser(SafeDeleteModel, Timestamps):
     _safedelete_policy = SOFT_DELETE_CASCADE
 
     id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
     )
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="vendor_users"
