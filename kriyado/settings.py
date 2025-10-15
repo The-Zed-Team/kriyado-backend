@@ -1,6 +1,7 @@
 import os
 
 from decouple import config
+from corsheaders.defaults import default_headers
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,10 +21,15 @@ DATABASES = {
 }
 
 ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS", default="", cast=lambda v: [s.strip() for s in v.split(",") if s]
+    "ALLOWED_HOSTS", default="localhost", cast=lambda v: [s.strip() for s in v.split(",") if s]
 )
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "vendor-id",
+    "vendorbranch-id",
+]
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -41,11 +47,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "kriyado.urls"
