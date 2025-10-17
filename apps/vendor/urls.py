@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 from .views import (
     ShopTypeViewSet,
-    VendorBranchViewSet,
+    VendorBranchViewSet, VendorDeleteAPIView,
 )
 
 router = DefaultRouter()
@@ -44,4 +44,6 @@ urlpatterns = [
         ),
         name="vendor-users",
     ),
+    path("delete/<uuid:id>/", VendorDeleteAPIView.as_view(), name="vendor-delete"),
+
 ]

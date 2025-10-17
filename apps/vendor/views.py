@@ -1,9 +1,7 @@
-from django.utils import timezone
 from rest_framework import generics
-from rest_framework import status
+from rest_framework import mixins
 from rest_framework import views
 from rest_framework import viewsets
-from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
@@ -13,10 +11,8 @@ from core.authentication.permission_class import (
     HasVendorBranchPermission,
     HasVendorPermission,
 )
-from rest_framework import mixins
-
 from .serializer import *
-
+from rest_framework import status
 
 class VendorCreateAPIView(generics.CreateAPIView):
     serializer_class = CreateVendorSerializer
@@ -170,3 +166,42 @@ class VendorUserInviteViewSet(
 
     def get_queryset(self):
         return VendorUserInvites.objects.filter(vendor=self.request.vendor)
+
+
+class VendorDeleteAPIView(generics.DestroyAPIView):
+    queryset = Vendor.objects.all()
+    lookup_field = "id"
+
+    def destroy(self, request, *args, **kwargs):
+        vendor = self.get_object()
+
+        # Delete vendor branches and branch-related data
+        for branch in vendor.branches.all():
+            # Branch users
+            branch.branch_users.all().delete()
+            # Branch roles
+            branch.roles.all().delete()
+            # Branch invites
+            branch.branch_user_invites.all().delete()
+            # Branch profile
+            if hasattr(branch, "profile") and branch.profile:
+                branch.profile.delete()
+            branch.delete()
+
+        # Delete vendor users
+        vendor.vendor_users.all().delete()
+        # Delete vendor roles
+        if hasattr(vendor, "roles"):
+            vendor.roles.all().delete()
+        # Delete vendor invites
+        vendor.user_invites.all().delete()
+        # Delete created_by user
+        if vendor.created_by:
+            vendor.created_by.delete()
+        # Finally delete vendor
+        vendor.delete()
+
+        return Response(
+            {"success": True, "message": "Vendor and all related data deleted successfully"},
+            status=status.HTTP_200_OK
+        )
