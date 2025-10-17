@@ -305,7 +305,7 @@ class VendorBranchUserRole(SafeDeleteModel, Timestamps):
     description = models.TextField(blank=True, null=True)
     vendor_branch = models.ForeignKey(
         VendorBranch,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         related_name="roles",
