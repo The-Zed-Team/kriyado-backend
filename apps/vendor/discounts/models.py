@@ -1,5 +1,6 @@
-from django.db import models
 import uuid
+
+from django.db import models
 from safedelete.models import SafeDeleteModel
 
 from apps.vendor.models import VendorBranch
@@ -51,12 +52,11 @@ class VendorBranchDiscount(SafeDeleteModel, Timestamps):
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    type = models.CharField(max_length=50, choices=DISCOUNT_TYPE_CHOICES)
     vendor_branch = models.ForeignKey(
         VendorBranch, on_delete=models.CASCADE, related_name="vendor_discounts"
     )
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
+    name = models.CharField(max_length=100, blank=True, null=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
     preset = models.ForeignKey(
         DiscountPreset,
         on_delete=models.CASCADE,
