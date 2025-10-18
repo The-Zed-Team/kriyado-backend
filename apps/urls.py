@@ -6,4 +6,5 @@ urlpatterns = [
     path("", include("apps.shared.urls")),
     path("", include("apps.customer.urls")),
     path("", include("apps.vendor.discounts.urls")),
+    path("", include("apps.admin.urls")),
 ]
