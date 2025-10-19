@@ -1,5 +1,5 @@
-from rest_framework import serializers
 from django.db import transaction
+from rest_framework import serializers
 
 from apps.vendor.models import *
 
@@ -186,7 +186,30 @@ class VendorBranchProfileSerializer(serializers.ModelSerializer):
             "datetime_updated",
             "vendor_branch",
         ]
-
+        extra_kwargs = {
+            "registered_address": {
+                "required": True,
+                "error_messages": {
+                    "required": "Registered address is required.",
+                    "blank": "Registered address cannot be blank.",
+                },
+            },
+            "google_map_link": {
+                "required": True,
+                "error_messages": {
+                    "required": "Google Map link is required.",
+                    "blank": "Google Map link cannot be blank.",
+                    "invalid": "Please enter a valid Google Map URL.",
+                },
+            },
+            "has_home_delivery": {
+                "required": True,
+                "error_messages": {
+                    "required": "Please specify if home delivery is available.",
+                    "null": "This field cannot be null.",
+                },
+            },
+        }
 
 class VendorUserInviteSerializer(serializers.ModelSerializer):
 
