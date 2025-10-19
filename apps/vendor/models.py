@@ -36,7 +36,7 @@ VENDOR_ONBOARDING_STEPS = {
     },
     # Step 2 - Contact details
     "branch_profile": {
-        "default_branch__profile__land_phone": {"required": True},
+        "default_branch__profile__land_phone": {"required": False},
         "default_branch__profile__registered_address": {"required": True},
         "default_branch__profile__facebook_link": {"required": False},
         "default_branch__profile__instagram_link": {"required": False},
@@ -192,7 +192,7 @@ class VendorBranchProfile(SafeDeleteModel, Timestamps):
 
     facebook_link = models.URLField(max_length=255, blank=True, null=True)
     instagram_link = models.URLField(max_length=255, blank=True, null=True)
-    google_map_link = models.URLField(max_length=255, blank=True, null=True)
+    google_map_link = models.URLField(max_length=500, blank=True, null=True)
     youtube_link = models.URLField(max_length=255, blank=True, null=True)
     store_photo = models.ImageField(
         upload_to="vendor_store_photos/", blank=True, null=True
@@ -305,7 +305,7 @@ class VendorBranchUserRole(SafeDeleteModel, Timestamps):
     description = models.TextField(blank=True, null=True)
     vendor_branch = models.ForeignKey(
         VendorBranch,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         null=False,
         blank=False,
         related_name="roles",
