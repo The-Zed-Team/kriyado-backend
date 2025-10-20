@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from apps.vendor.discounts.models import DiscountPreset, VendorBranchDiscount, Category
-from apps.vendor.models import VendorBranch
 
 
 class VendorBranchDiscountSerializer(serializers.ModelSerializer):
@@ -18,27 +17,51 @@ class VendorBranchDiscountSerializer(serializers.ModelSerializer):
         max_digits=10, decimal_places=2, required=False
     )
 
+    type = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+
     def validate(self, attrs):
         if "preset" in attrs and attrs["preset"] is not None:
             if (
-                attrs.get("purchase_above") is not None
-                or attrs.get("discount_value") is not None
+                    attrs.get("purchase_above") is not None
+                    or attrs.get("discount_value") is not None
             ):
-                raise serializers.ValidationError(
-                    {
-                        "non_field_errors": "Cannot set purchase_above or discount_value when preset is selected."
-                    }
-                )
+                raise serializers.ValidationError({
+                    "non_field_errors": "Cannot set purchase_above or discount_value when preset is selected."
+                })
             preset = attrs["preset"]
             attrs["purchase_above"] = preset.purchase_above
             attrs["discount_value"] = preset.discount_value
             attrs["category"] = preset.category
-        elif attrs["type"] == "category_based":
-            if "category" not in attrs or attrs["category"] is None:
-                raise serializers.ValidationError(
-                    {"category": "This field is required for category type discounts."}
-                )
+
+        elif attrs.get("type") == "category_based":
+            if not attrs.get("category"):
+                raise serializers.ValidationError({
+                    "category": "This field is required for category type discounts."
+                })
+
         return super().validate(attrs)
+
+    # def validate(self, attrs):
+    #     if "preset" in attrs and attrs["preset"] is not None:
+    #         if (
+    #             attrs.get("purchase_above") is not None
+    #             or attrs.get("discount_value") is not None
+    #         ):
+    #             raise serializers.ValidationError(
+    #                 {
+    #                     "non_field_errors": "Cannot set purchase_above or discount_value when preset is selected."
+    #                 }
+    #             )
+    #         preset = attrs["preset"]
+    #         attrs["purchase_above"] = preset.purchase_above
+    #         attrs["discount_value"] = preset.discount_value
+    #         attrs["category"] = preset.category
+    #     elif attrs["type"] == "category_based":
+    #         if "category" not in attrs or attrs["category"] is None:
+    #             raise serializers.ValidationError(
+    #                 {"category": "This field is required for category type discounts."}
+    #             )
+    #     return super().validate(attrs)
 
     def create(self, validated_data):
         validated_data["vendor_branch"] = self.context["request"].vendor_branch
