@@ -1,0 +1,16 @@
+version: "1.1"
+
+services:
+  backend:
+    build: .
+    container_name: kriyado-backend
+    volumes:
+      - ./:/backend
+    command: >
+      python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    env_file: .env
+    restart: on-failure
