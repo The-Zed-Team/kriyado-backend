@@ -118,42 +118,40 @@ class Vendor(SafeDeleteModel, Timestamps):
     # def __str__(self):
     #     return self.name
     def update_vendor_onboarding_status(self) -> tuple[bool, dict]:
-    """
-    Evaluate and update vendor onboarding status based on required steps.
+        """
+        Evaluate and update vendor onboarding status based on required steps.
 
-    Returns:
-        (is_onboarded: bool, step_status: dict)
-    """
-    from apps.vendor.models import VENDOR_ONBOARDING_STEPS
-    from core.django.models.utils import get_nested_attr
+        Returns:
+            (is_onboarded: bool, step_status: dict)
+        """
 
-    # Refresh vendor and related objects
-    self.refresh_from_db()
-    if self.default_branch_id:
-        self.default_branch.refresh_from_db()
-        if hasattr(self.default_branch, "profile"):
-            self.default_branch.profile.refresh_from_db()
+        # Refresh vendor and related objects
+        self.refresh_from_db()
+        if self.default_branch_id:
+            self.default_branch.refresh_from_db()
+            if hasattr(self.default_branch, "profile"):
+                self.default_branch.profile.refresh_from_db()
 
-    step_status = {}
+        step_status = {}
 
-    for step, fields in VENDOR_ONBOARDING_STEPS.items():
-        completed = True
-        for field, rules in fields.items():
-            if rules.get("required", False):
-                val = get_nested_attr(self, field)
-                if val is None:
-                    completed = False
-                    break
-        step_status[step] = completed
+        for step, fields in VENDOR_ONBOARDING_STEPS.items():
+            completed = True
+            for field, rules in fields.items():
+                if rules.get("required", False):
+                    val = get_nested_attr(self, field)
+                    if val is None:
+                        completed = False
+                        break
+            step_status[step] = completed
 
-    is_onboarded = all(step_status.values())
+        is_onboarded = all(step_status.values())
 
-    # Persist the onboarding status only if it changed
-    if self.is_onboarded != is_onboarded:
-        self.is_onboarded = is_onboarded
-        self.save(update_fields=["is_onboarded"])
+        # Persist the onboarding status only if it changed
+        if self.is_onboarded != is_onboarded:
+            self.is_onboarded = is_onboarded
+            self.save(update_fields=["is_onboarded"])
 
-    return self.is_onboarded, step_status
+        return self.is_onboarded, step_status
 
 
 class VendorBranch(SafeDeleteModel, Timestamps):
