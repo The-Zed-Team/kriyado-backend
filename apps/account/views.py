@@ -122,11 +122,11 @@ class FirebaseUserAuthenticationView(APIView):
                         {"password": "Password must be at least 8 characters long."},
                         code=400,
                     )
-                if not first_name:
-                    raise serializers.ValidationError(
-                        {"first_name": "This field is required for email sign-in."},
-                        code=400,
-                    )
+                # if not first_name:
+                #     raise serializers.ValidationError(
+                #         {"first_name": "This field is required for email sign-in."},
+                #         code=400,
+                #     )
             else:
                 raise serializers.ValidationError(
                     {"detail": f"Unsupported provider: {provider_data.provider_id}"},
