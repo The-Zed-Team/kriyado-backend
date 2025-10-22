@@ -91,32 +91,69 @@ class Vendor(SafeDeleteModel, Timestamps):
     )
     is_onboarded = models.BooleanField(default=False)
 
+    # def update_vendor_onboarding_status(self) -> tuple[bool, dict]:
+    #     """
+    #     Evaluates and updates the vendor's onboarding status based on the completion of required steps.
+    #     Returns a tuple containing the overall onboarding status and a dictionary with the completion status of each step.
+    #     """
+    #     step_status = {}
+    #     if self.is_onboarded:
+    #         return True, {key: True for key in VENDOR_ONBOARDING_STEPS.keys()}
+
+    #     for key, data in VENDOR_ONBOARDING_STEPS.items():
+    #         step_completed = True
+    #         for field, rules in data.items():
+    #             if rules.get("required", False):
+    #                 if not get_nested_attr(self, field):
+    #                     step_completed = False
+    #                     break
+    #         step_status[key] = step_completed
+
+    #     if not self.is_onboarded:
+    #         self.is_onboarded = all(step_status.values())
+    #         self.save(update_fields=["is_onboarded"])
+
+    #     return self.is_onboarded, step_status
+
+    # def __str__(self):
+    #     return self.name
     def update_vendor_onboarding_status(self) -> tuple[bool, dict]:
-        """
-        Evaluates and updates the vendor's onboarding status based on the completion of required steps.
-        Returns a tuple containing the overall onboarding status and a dictionary with the completion status of each step.
-        """
-        step_status = {}
-        if self.is_onboarded:
-            return True, {key: True for key in VENDOR_ONBOARDING_STEPS.keys()}
+    """
+    Evaluate and update vendor onboarding status based on required steps.
 
-        for key, data in VENDOR_ONBOARDING_STEPS.items():
-            step_completed = True
-            for field, rules in data.items():
-                if rules.get("required", False):
-                    if not get_nested_attr(self, field):
-                        step_completed = False
-                        break
-            step_status[key] = step_completed
+    Returns:
+        (is_onboarded: bool, step_status: dict)
+    """
+    from apps.vendor.models import VENDOR_ONBOARDING_STEPS
+    from core.django.models.utils import get_nested_attr
 
-        if not self.is_onboarded:
-            self.is_onboarded = all(step_status.values())
-            self.save(update_fields=["is_onboarded"])
+    # Refresh vendor and related objects
+    self.refresh_from_db()
+    if self.default_branch_id:
+        self.default_branch.refresh_from_db()
+        if hasattr(self.default_branch, "profile"):
+            self.default_branch.profile.refresh_from_db()
 
-        return self.is_onboarded, step_status
+    step_status = {}
 
-    def __str__(self):
-        return self.name
+    for step, fields in VENDOR_ONBOARDING_STEPS.items():
+        completed = True
+        for field, rules in fields.items():
+            if rules.get("required", False):
+                val = get_nested_attr(self, field)
+                if val is None:
+                    completed = False
+                    break
+        step_status[step] = completed
+
+    is_onboarded = all(step_status.values())
+
+    # Persist the onboarding status only if it changed
+    if self.is_onboarded != is_onboarded:
+        self.is_onboarded = is_onboarded
+        self.save(update_fields=["is_onboarded"])
+
+    return self.is_onboarded, step_status
 
 
 class VendorBranch(SafeDeleteModel, Timestamps):
