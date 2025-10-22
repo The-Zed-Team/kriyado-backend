@@ -13,7 +13,7 @@ class Admin(SafeDeleteModel, Timestamps):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True)
     name = models.CharField(max_length=200)
-    active = models.BooleanField(default=False)  # Admin verification status
+    active = models.BooleanField(default=True)  # Admin verification status
     created_by = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admin")
 
     def __str__(self):

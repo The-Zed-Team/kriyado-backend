@@ -31,8 +31,7 @@ class PendingAdminListAPIView(generics.ListAPIView):
 class ApproveAdminAPIView(generics.UpdateAPIView):
     queryset = Admin.objects.all()
     serializer_class = AdminApproveSerializer
-    permission_classes = []
-    # permission_classes = [permissions.IsAuthenticated, HasAdminPermission]
+    permission_classes = [permissions.IsAuthenticated, HasAdminPermission]
     lookup_field = "id"
 
     def update(self, request, *args, **kwargs):
