@@ -14,4 +14,6 @@ urlpatterns = [
     path("role/delete/<uuid:id>/", views.AdminUserRoleDeleteAPIView.as_view(), name="admin-role-delete"),
 
     path("user/create/", views.AdminUserCreateAPIView.as_view(), name="admin-user-create"),
+    path("admin/super/create/", views.CreateSuperAdminAPIView.as_view(), name="create-super-admin"),
+
 ]
