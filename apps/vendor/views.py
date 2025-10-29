@@ -136,8 +136,8 @@ class VendorBranchProfileViewSet(
 ):
     queryset = VendorBranchProfile.objects.all()
     serializer_class = VendorBranchProfileSerializer
-    # permission_classes = [HasVendorBranchPermission]
-    permission_classes = []
+    permission_classes = [HasVendorBranchPermission]
+
     def get_object(self):
         return get_object_or_404(
             VendorBranchProfile, vendor_branch=self.request.vendor_branch
