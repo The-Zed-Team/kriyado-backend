@@ -40,7 +40,7 @@ VENDOR_ONBOARDING_STEPS = {
         "default_branch__profile__registered_address": {"required": True},
         "default_branch__profile__facebook_link": {"required": False},
         "default_branch__profile__instagram_link": {"required": False},
-        "default_branch__profile__google_map_link": {"required": True},
+        "default_branch__profile__google_map_link": {"required": False},
         "default_branch__profile__youtube_link": {"required": False},
         "default_branch__profile__working_hours_from": {"required": True},
         "default_branch__profile__working_hours_to": {"required": True},
